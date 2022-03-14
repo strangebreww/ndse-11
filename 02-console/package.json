@@ -1,0 +1,19 @@
+{
+  "name": "console",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Command line arguments and console",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Alexey Ermakov",
+  "license": "ISC",
+  "bin": {
+    "simple-date": "date.js"
+  },
+  "dependencies": {
+    "yargs": "^17.3.1"
+  }
+}
