@@ -1,0 +1,17 @@
+{
+  "name": "ndse11",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Netology NDSE-11 course homeworks",
+  "main": "",
+  "scripts": {},
+  "keywords": [],
+  "author": "Alexey Ermakov",
+  "license": "ISC",
+  "dependencies": {
+    "eslint": "^8.11.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.5.1"
+  }
+}
