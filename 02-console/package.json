@@ -11,7 +11,8 @@
   "author": "Alexey Ermakov",
   "license": "ISC",
   "bin": {
-    "simple-date": "date.js"
+    "simple-date": "date.js",
+    "simple-quiz": "quiz.js"
   },
   "dependencies": {
     "yargs": "^17.3.1"
