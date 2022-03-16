@@ -75,18 +75,7 @@ yargs(hideBin(process.argv))
 				});
 		},
 		function (argv) {
-			const resultDate = new Date();
-
-			for (const datePart in argv) {
-				if (options.includes(datePart)) {
-					handlers[datePart].set.call(
-						resultDate,
-						handlers[datePart].get.call(resultDate) + argv[datePart]
-					);
-				}
-			}
-
-			console.log("date in the future", resultDate.toISOString());
+			modifyCurrentDate(argv, "add");
 		}
 	)
 	.command(
@@ -111,17 +100,26 @@ yargs(hideBin(process.argv))
 				});
 		},
 		function (argv) {
-			const resultDate = new Date();
-
-			for (const datePart in argv) {
-				if (options.includes(datePart)) {
-					handlers[datePart].set.call(
-						resultDate,
-						handlers[datePart].get.call(resultDate) - argv[datePart]
-					);
-				}
-			}
-
-			console.log("date in the past", resultDate.toISOString());
+			modifyCurrentDate(argv, "sub");
 		}
 	).argv;
+
+function modifyCurrentDate(argv, action = "add") {
+	const resultDate = new Date();
+
+	for (const datePart in argv) {
+		if (options.includes(datePart)) {
+			const diff = action === "sub" ? -argv[datePart] : argv[datePart];
+
+			handlers[datePart].set.call(
+				resultDate,
+				handlers[datePart].get.call(resultDate) + diff
+			);
+		}
+	}
+
+	const message =
+		action === "sub" ? "date in the past" : "date in the future";
+
+	console.log(message, resultDate.toISOString());
+}
