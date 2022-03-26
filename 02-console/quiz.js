@@ -8,7 +8,7 @@ const rl = readline.createInterface({
 
 console.log("Загадано число в диапазоне от 0 до 100");
 
-const secretNum = Math.trunc(Math.random(0, 1) * 100) + 1;
+const secretNum = Math.floor(Math.random() * 101);
 
 rl.on("line", (data) => {
 	const num = Number(data);
