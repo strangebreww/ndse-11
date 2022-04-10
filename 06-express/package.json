@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "description": "",
-  "main": "books.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node books.js",
-    "dev": "nodemon -r dotenv/config books.js"
+    "start": "node server.js",
+    "dev": "nodemon -r dotenv/config server.js"
   },
   "keywords": [],
   "author": "Alexey Ermakov",
