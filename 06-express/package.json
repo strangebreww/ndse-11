@@ -6,15 +6,17 @@
   "main": "books.js",
   "scripts": {
     "start": "node books.js",
-    "dev": "nodemon books.js"
+    "dev": "nodemon -r dotenv/config books.js"
   },
   "keywords": [],
   "author": "Alexey Ermakov",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.3"
+    "express": "^4.17.3",
+    "express-form-data": "^2.0.17"
   },
   "devDependencies": {
+    "dotenv": "^16.0.0",
     "nodemon": "^2.0.15"
   }
 }
