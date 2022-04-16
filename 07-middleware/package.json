@@ -1,0 +1,25 @@
+{
+	"name": "middleware",
+	"version": "1.0.0",
+	"private": true,
+	"description": "",
+	"main": "server.js",
+	"scripts": {
+		"start": "node server.js",
+		"dev": "nodemon -r dotenv/config server.js"
+	},
+	"keywords": [
+		"express",
+		"middleware"
+	],
+	"author": "Alexey Ermakov",
+	"license": "ISC",
+	"dependencies": {
+		"express": "^4.17.3",
+		"express-form-data": "^2.0.17"
+	},
+	"devDependencies": {
+		"dotenv": "^16.0.0",
+		"nodemon": "^2.0.15"
+	}
+}
