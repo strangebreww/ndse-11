@@ -8,14 +8,21 @@ app.use(formData.parse());
 
 let books = new Array(3).fill(null).map(() => new Book());
 
+const props = [
+	"title",
+	"description",
+	"authors",
+	"favorite",
+	"fileCover",
+	"fileName",
+];
+
 app.post("/api/user/login", (_req, res) => {
-	res.status(201);
-	res.json({ id: 1, mail: "test@mail.ru" });
+	res.status(201).json({ id: 1, mail: "test@mail.ru" });
 });
 
 app.get("/api/books", (_req, res) => {
-	res.status(200);
-	res.json(books);
+	res.status(200).json(books);
 });
 
 app.get("/api/books/:id", (req, res) => {
@@ -30,7 +37,15 @@ app.get("/api/books/:id", (req, res) => {
 });
 
 app.post("/api/books", (req, res) => {
-	books.push(new Book());
+	const newBook = new Book();
+
+	props.forEach((p) => {
+		if (req.body[p] !== undefined) {
+			newBook[p] = req.body[p];
+		}
+	});
+
+	books.push(newBook);
 
 	res.status(201).json(books.at(-1));
 });
@@ -40,23 +55,13 @@ app.put("/api/books/:id", (req, res) => {
 	let book = books.find((b) => b.id === id);
 
 	if (book) {
-		const props = [
-			"title",
-			"description",
-			"authors",
-			"favorite",
-			"fileCover",
-			"fileName",
-		];
-
 		props.forEach((p) => {
 			if (req.body[p] !== undefined) {
 				book[p] = req.body[p];
 			}
 		});
 
-		res.status(200);
-		res.json(book);
+		res.status(200).json(book);
 	} else {
 		res.status(404).send("not found");
 	}
