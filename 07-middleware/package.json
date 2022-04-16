@@ -15,8 +15,9 @@
 	"author": "Alexey Ermakov",
 	"license": "ISC",
 	"dependencies": {
+		"body-parser": "^1.20.0",
 		"express": "^4.17.3",
-		"express-form-data": "^2.0.17"
+		"multer": "^1.4.4"
 	},
 	"devDependencies": {
 		"dotenv": "^16.0.0",

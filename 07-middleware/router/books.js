@@ -1,5 +1,5 @@
-const express = require("express");
-const router = express.Router();
+const router = require("express").Router();
+const fileMiddleware = require("../middleware/file");
 
 const Book = require("../models/Book");
 
@@ -66,6 +66,16 @@ router.delete("/:id", (req, res) => {
 	books = books.filter((b) => b.id !== id);
 
 	res.status(200).send("ok");
+});
+
+router.post("/upload", fileMiddleware.single("book"), (req, res) => {
+	if (req.file) {
+		const { path } = req.file;
+
+		res.json(path);
+	} else {
+		res.json(null);
+	}
 });
 
 module.exports = router;
