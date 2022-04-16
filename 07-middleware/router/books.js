@@ -1,9 +1,12 @@
 const router = require("express").Router();
 const fileMiddleware = require("../middleware/file");
+const path = require("path");
 
 const Book = require("../models/Book");
 
 let books = new Array(3).fill(null).map(() => new Book());
+
+books[0].fileBook = "1650108761146-test.html";
 
 const props = [
 	"title",
@@ -75,6 +78,24 @@ router.post("/upload", fileMiddleware.single("book"), (req, res) => {
 		res.json(path);
 	} else {
 		res.json(null);
+	}
+});
+
+router.get("/:id/download", (req, res) => {
+	const { id } = req.params;
+	const book = books.find((b) => b.id === id);
+
+	if (book) {
+		res.download(
+			path.join(__dirname, "../public/uploads", book.fileBook),
+			(err) => {
+				if (err) {
+					res.status(404).send("not found");
+				}
+			}
+		);
+	} else {
+		res.status(404).send("not found");
 	}
 });
 
