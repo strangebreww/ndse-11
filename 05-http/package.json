@@ -1,17 +1,17 @@
 {
-  "name": "http",
-  "version": "1.0.0",
-  "private": true,
-  "description": "",
-  "main": "weather.js",
-  "scripts": {
-  	"start": "node weather.js",
-    "dev": "node -r dotenv/config weather.js"
-  },
-  "keywords": [],
-  "author": "Alexey Ermakov",
-  "license": "ISC",
-  "devDependencies": {
-    "dotenv": "^16.0.0"
-  }
+	"name": "http",
+	"version": "1.0.0",
+	"private": true,
+	"description": "",
+	"main": "weather.js",
+	"scripts": {
+		"start": "node weather.js",
+		"dev": "node -r dotenv/config weather.js"
+	},
+	"keywords": [],
+	"author": "Alexey Ermakov",
+	"license": "ISC",
+	"devDependencies": {
+		"dotenv": "^16.0.0"
+	}
 }

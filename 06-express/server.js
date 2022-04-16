@@ -1,7 +1,7 @@
 const express = require("express");
 const formData = require("express-form-data");
 
-const Book = require("./book");
+const Book = require("./models/Book");
 
 const app = express();
 app.use(formData.parse());
