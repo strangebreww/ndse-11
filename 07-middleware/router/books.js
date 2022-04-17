@@ -32,30 +32,42 @@ router.get("/:id", (req, res) => {
 	}
 });
 
-router.post("/", (req, res) => {
+router.post("/", fileMiddleware.single("book"), (req, res) => {
 	const newBook = new Book();
 
+	const { body, file } = req;
+
 	props.forEach((p) => {
-		if (req.body[p] !== undefined) {
-			newBook[p] = req.body[p];
+		if (body[p] !== undefined) {
+			newBook[p] = body[p];
 		}
 	});
+
+	if (file) {
+		newBook.fileBook = file.path;
+	}
 
 	books.push(newBook);
 
 	res.status(201).json(books.at(-1));
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", fileMiddleware.single("book"), (req, res) => {
 	const { id } = req.params;
 	let book = books.find((b) => b.id === id);
 
 	if (book) {
+		const { body, file } = req;
+
 		props.forEach((p) => {
-			if (req.body[p] !== undefined) {
-				book[p] = req.body[p];
+			if (body[p] !== undefined) {
+				book[p] = body[p];
 			}
 		});
+
+		if (file) {
+			book.fileBook = file.path;
+		}
 
 		res.status(200).json(book);
 	} else {
@@ -69,16 +81,6 @@ router.delete("/:id", (req, res) => {
 	books = books.filter((b) => b.id !== id);
 
 	res.status(200).send("ok");
-});
-
-router.post("/upload", fileMiddleware.single("book"), (req, res) => {
-	if (req.file) {
-		const { path } = req.file;
-
-		res.json(path);
-	} else {
-		res.json(null);
-	}
 });
 
 router.get("/:id/download", (req, res) => {
