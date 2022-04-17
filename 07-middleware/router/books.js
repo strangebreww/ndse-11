@@ -6,7 +6,7 @@ const Book = require("../models/Book");
 
 let books = new Array(3).fill(null).map(() => new Book());
 
-books[0].fileBook = "1650108761146-test.html";
+books[0].fileBook = "public/uploads/1650108761146-test.html";
 
 const props = [
 	"title",
@@ -88,14 +88,11 @@ router.get("/:id/download", (req, res) => {
 	const book = books.find((b) => b.id === id);
 
 	if (book) {
-		res.download(
-			path.join(__dirname, "../public/uploads", book.fileBook),
-			(err) => {
-				if (err) {
-					res.status(404).send("not found");
-				}
+		res.download(path.join(__dirname, "..", book.fileBook), (err) => {
+			if (err) {
+				res.status(404).send("not found");
 			}
-		);
+		});
 	} else {
 		res.status(404).send("not found");
 	}
