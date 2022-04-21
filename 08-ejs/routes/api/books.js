@@ -32,7 +32,7 @@ router.get("/:id", (req, res) => {
 	}
 });
 
-router.post("/", fileMiddleware.single("book"), (req, res) => {
+router.post("/", fileMiddleware.single("fileBook"), (req, res) => {
 	const newBook = new Book();
 
 	const { body, file } = req;
@@ -52,7 +52,7 @@ router.post("/", fileMiddleware.single("book"), (req, res) => {
 	res.status(201).json(books.at(-1));
 });
 
-router.put("/:id", fileMiddleware.single("book"), (req, res) => {
+router.put("/:id", fileMiddleware.single("fileBook"), (req, res) => {
 	const { id } = req.params;
 	let book = books.find((b) => b.id === id);
 
@@ -88,7 +88,7 @@ router.get("/:id/download", (req, res) => {
 	const book = books.find((b) => b.id === id);
 
 	if (book) {
-		res.download(path.join(__dirname, "..", book.fileBook), (err) => {
+		res.download(path.join(__dirname, "../..", book.fileBook), (err) => {
 			if (err) {
 				res.status(404).send("not found");
 			}

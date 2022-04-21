@@ -1,6 +1,5 @@
 const router = require("express").Router();
 const fileMiddleware = require("../middleware/file");
-const path = require("path");
 
 const Book = require("../models/Book");
 
@@ -17,22 +16,26 @@ const props = [
 	"fileName",
 ];
 
-router.get("/", (_req, res) => {
-	res.status(200).json(books);
+router.get("/view", (_req, res) => {
+	res.render("books/index", { title: "Книги", books: books });
 });
 
-router.get("/:id", (req, res) => {
+router.get("/view/:id", (req, res) => {
 	const { id } = req.params;
 	const book = books.find((b) => b.id === id);
 
 	if (book) {
-		res.status(200).json(book);
+		res.render("books/view", { title: "Просмотр книги", book: book });
 	} else {
-		res.status(404).send("not found");
+		res.status(404).redirect("/404");
 	}
 });
 
-router.post("/", fileMiddleware.single("fileBook"), (req, res) => {
+router.get("/create", (_req, res) => {
+	res.render("books/create", { title: "Добавление книги", book: {} });
+});
+
+router.post("/create", fileMiddleware.single("fileBook"), (req, res) => {
 	const newBook = new Book();
 
 	const { body, file } = req;
@@ -49,10 +52,24 @@ router.post("/", fileMiddleware.single("fileBook"), (req, res) => {
 
 	books.push(newBook);
 
-	res.status(201).json(books.at(-1));
+	res.redirect("/books/view");
 });
 
-router.put("/:id", fileMiddleware.single("fileBook"), (req, res) => {
+router.get("/update/:id", (req, res) => {
+	const { id } = req.params;
+	let book = books.find((b) => b.id === id);
+
+	if (book) {
+		res.render("books/update", {
+			title: "Редактирование книги",
+			book: book,
+		});
+	} else {
+		res.status(404).redirect("/404");
+	}
+});
+
+router.post("/update/:id", fileMiddleware.single("fileBook"), (req, res) => {
 	const { id } = req.params;
 	let book = books.find((b) => b.id === id);
 
@@ -69,33 +86,18 @@ router.put("/:id", fileMiddleware.single("fileBook"), (req, res) => {
 			book.fileBook = file.path;
 		}
 
-		res.status(200).json(book);
+		res.redirect("/books/view/" + id);
 	} else {
-		res.status(404).send("not found");
+		res.status(404).redirect("/404");
 	}
 });
 
-router.delete("/:id", (req, res) => {
+router.post("/delete/:id", (req, res) => {
 	const { id } = req.params;
 
 	books = books.filter((b) => b.id !== id);
 
-	res.status(200).send("ok");
-});
-
-router.get("/:id/download", (req, res) => {
-	const { id } = req.params;
-	const book = books.find((b) => b.id === id);
-
-	if (book) {
-		res.download(path.join(__dirname, "..", book.fileBook), (err) => {
-			if (err) {
-				res.status(404).send("not found");
-			}
-		});
-	} else {
-		res.status(404).send("not found");
-	}
+	res.status(200).redirect("/books/view");
 });
 
 module.exports = router;
