@@ -1,7 +1,7 @@
 const express = require("express");
 const errorMiddleware = require("./middleware/error");
-const userRouter = require("./router/user");
-const booksRouter = require("./router/books");
+const userRouter = require("./routes/user");
+const booksRouter = require("./routes/books");
 
 const app = express();
 

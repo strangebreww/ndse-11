@@ -1,8 +1,8 @@
 const router = require("express").Router();
-const fileMiddleware = require("../middleware/file");
+const fileMiddleware = require("../../middleware/file");
 const path = require("path");
 
-const Book = require("../models/Book");
+const Book = require("../../models/Book");
 
 let books = new Array(3).fill(null).map(() => new Book());
 
