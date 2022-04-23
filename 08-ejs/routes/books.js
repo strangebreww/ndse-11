@@ -3,9 +3,7 @@ const fileMiddleware = require("../middleware/file");
 
 const Book = require("../models/Book");
 
-let books = new Array(3).fill(null).map(() => new Book());
-
-books[0].fileBook = "public/uploads/1650108761146-test.html";
+const { books } = require("./store");
 
 const props = [
 	"title",
@@ -94,10 +92,14 @@ router.post("/update/:id", fileMiddleware.single("fileBook"), (req, res) => {
 
 router.post("/delete/:id", (req, res) => {
 	const { id } = req.params;
+	const index = books.findIndex((b) => b.id === id);
 
-	books = books.filter((b) => b.id !== id);
-
-	res.status(200).redirect("/books/view");
+	if (index !== -1) {
+		books.splice(index, 1);
+		res.status(200).redirect("/books/view");
+	} else {
+		res.status(404).redirect("/404");
+	}
 });
 
 module.exports = router;

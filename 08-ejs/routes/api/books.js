@@ -4,9 +4,7 @@ const path = require("path");
 
 const Book = require("../../models/Book");
 
-let books = new Array(3).fill(null).map(() => new Book());
-
-books[0].fileBook = "public/uploads/1650108761146-test.html";
+const { books } = require("../store");
 
 const props = [
 	"title",
@@ -77,10 +75,14 @@ router.put("/:id", fileMiddleware.single("fileBook"), (req, res) => {
 
 router.delete("/:id", (req, res) => {
 	const { id } = req.params;
+	const index = books.findIndex((b) => b.id === id);
 
-	books = books.filter((b) => b.id !== id);
-
-	res.status(200).send("ok");
+	if (index !== -1) {
+		books.splice(index, 1);
+		res.status(200).send("ok");
+	} else {
+		res.status(404).send("not found");
+	}
 });
 
 router.get("/:id/download", (req, res) => {
