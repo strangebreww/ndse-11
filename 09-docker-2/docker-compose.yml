@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+  library:
+    build: ./library
+    ports:
+      - 3000:3000
+    environment:
+      - PORT=3000
+  counter:
+    build: ./counter
+    ports:
+      - 3001:3001
+    environment:
+      - PORT=3001
