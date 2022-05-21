@@ -1,19 +1,34 @@
 const express = require("express");
+const { initCounter, saveCounter } = require("./file");
 
 const app = express();
 
-const counter = {};
+const counter = initCounter();
 
-app.post("/counter/:bookId/incr", (req, res) => {
+app.post("/counter/:bookId/incr", async (req, res) => {
 	const { bookId } = req.params;
 
 	counter[bookId] = counter[bookId] === undefined ? 1 : counter[bookId] + 1;
+
+	try {
+		await saveCounter(counter);
+	} catch (e) {
+		console.log(e.message);
+
+		res.status(404).send("not found");
+	}
 
 	res.status(201).json({ counter });
 });
 
 app.get("/counter/:bookId", (_req, res) => {
-	res.status(200).json({ counter });
+	try {
+		res.status(200).json({ counter });
+	} catch (e) {
+		console.log(e.message);
+
+		res.status(404).send("not found");
+	}
 });
 
 const port = process.env.PORT || 3001;
