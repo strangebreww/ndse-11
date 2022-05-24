@@ -2,7 +2,7 @@ const fs = require("fs");
 const fsPromises = require("fs/promises");
 const path = require("path");
 
-const dataDir = path.join(__dirname, "..", "data");
+const dataDir = path.join(__dirname, "..", "app-data");
 const file = path.join(dataDir, "counter.txt");
 
 function initCounter() {

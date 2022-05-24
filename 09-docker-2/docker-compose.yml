@@ -1,4 +1,5 @@
 version: "3.9"
+
 services:
   library:
     build: ./library
@@ -6,9 +7,13 @@ services:
       - 3000:3000
     environment:
       - PORT=3000
+    volumes:
+      - ./data:/app-data
   counter:
     build: ./counter
     ports:
       - 3001:3001
     environment:
       - PORT=3001
+    volumes:
+      - ./data:/app-data
