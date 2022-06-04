@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const fileMiddleware = require("../middleware/file");
+const http = require("http");
 
 const Book = require("../models/Book");
 
@@ -18,12 +19,18 @@ router.get("/view", (_req, res) => {
 	res.render("books/index", { title: "Книги", books: books });
 });
 
-router.get("/view/:id", (req, res) => {
+router.get("/view/:id", async (req, res) => {
 	const { id } = req.params;
 	const book = books.find((b) => b.id === id);
 
 	if (book) {
-		res.render("books/view", { title: "Просмотр книги", book: book });
+		const counter = await getCounter(id);
+
+		res.render("books/view", {
+			title: "Просмотр книги",
+			book,
+			counter,
+		});
 	} else {
 		res.status(404).redirect("/404");
 	}
@@ -60,7 +67,7 @@ router.get("/update/:id", (req, res) => {
 	if (book) {
 		res.render("books/update", {
 			title: "Редактирование книги",
-			book: book,
+			book,
 		});
 	} else {
 		res.status(404).redirect("/404");
@@ -101,5 +108,31 @@ router.post("/delete/:id", (req, res) => {
 		res.status(404).redirect("/404");
 	}
 });
+
+function getCounter(id) {
+	const url = `${process.env.COUNTER_URL}/counter/${id}`;
+
+	return new Promise((resolve) => {
+		http.get(url, (res) => {
+			res.setEncoding("utf8");
+
+			let rawData = "";
+
+			res.on("data", (chunk) => {
+				rawData = rawData + chunk;
+			});
+
+			res.on("end", () => {
+				try {
+					resolve(rawData);
+				} catch (e) {
+					console.error(e.message);
+				}
+			});
+		}).on("error", (e) => {
+			console.error(`Got error: ${e.message}`);
+		});
+	});
+}
 
 module.exports = router;

@@ -7,8 +7,12 @@ services:
       - 3000:3000
     environment:
       - PORT=3000
+      - COUNTER_URL=http://counter:3001
     volumes:
       - ./data:/app-data
+    depends_on:
+      - counter
+
   counter:
     build: ./counter
     ports:
