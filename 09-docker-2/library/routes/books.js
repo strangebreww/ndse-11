@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const fileMiddleware = require("../middleware/file");
-const http = require("http");
+const { incCounter, getCounter } = require("../api/counter");
 
 const Book = require("../models/Book");
 
@@ -24,6 +24,7 @@ router.get("/view/:id", async (req, res) => {
 	const book = books.find((b) => b.id === id);
 
 	if (book) {
+		await incCounter(id);
 		const counter = await getCounter(id);
 
 		res.render("books/view", {
@@ -108,31 +109,5 @@ router.post("/delete/:id", (req, res) => {
 		res.status(404).redirect("/404");
 	}
 });
-
-function getCounter(id) {
-	const url = `${process.env.COUNTER_URL}/counter/${id}`;
-
-	return new Promise((resolve) => {
-		http.get(url, (res) => {
-			res.setEncoding("utf8");
-
-			let rawData = "";
-
-			res.on("data", (chunk) => {
-				rawData = rawData + chunk;
-			});
-
-			res.on("end", () => {
-				try {
-					resolve(rawData);
-				} catch (e) {
-					console.error(e.message);
-				}
-			});
-		}).on("error", (e) => {
-			console.error(`Got error: ${e.message}`);
-		});
-	});
-}
 
 module.exports = router;
