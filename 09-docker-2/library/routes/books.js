@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const fileMiddleware = require("../middleware/file");
+const { incCounter, getCounter } = require("../api/counter");
 
 const Book = require("../models/Book");
 
@@ -18,12 +19,19 @@ router.get("/view", (_req, res) => {
 	res.render("books/index", { title: "Книги", books: books });
 });
 
-router.get("/view/:id", (req, res) => {
+router.get("/view/:id", async (req, res) => {
 	const { id } = req.params;
 	const book = books.find((b) => b.id === id);
 
 	if (book) {
-		res.render("books/view", { title: "Просмотр книги", book: book });
+		await incCounter(id);
+		const counter = await getCounter(id);
+
+		res.render("books/view", {
+			title: "Просмотр книги",
+			book,
+			counter,
+		});
 	} else {
 		res.status(404).redirect("/404");
 	}
@@ -60,7 +68,7 @@ router.get("/update/:id", (req, res) => {
 	if (book) {
 		res.render("books/update", {
 			title: "Редактирование книги",
-			book: book,
+			book,
 		});
 	} else {
 		res.status(404).redirect("/404");

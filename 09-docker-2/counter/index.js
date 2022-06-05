@@ -21,9 +21,13 @@ app.post("/counter/:bookId/incr", async (req, res) => {
 	res.status(201).json({ counter });
 });
 
-app.get("/counter/:bookId", (_req, res) => {
+app.get("/counter/:bookId", (req, res) => {
+	const { bookId } = req.params;
+
 	try {
-		res.status(200).json({ counter });
+		const visits = counter[bookId] ?? 0;
+
+		res.status(200).send(visits.toString());
 	} catch (e) {
 		console.log(e.message);
 
