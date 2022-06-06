@@ -1,26 +1,34 @@
-class Book {
-	static idCounter = 1;
+const { model, Schema } = require("mongoose");
 
-	constructor(
-		title = "",
-		description = "",
-		authors = "",
-		favorite = "",
-		fileCover = "",
-		fileName = "",
-		fileBook = ""
-	) {
-		this.id = Book.idCounter.toString();
-		this.title = title;
-		this.description = description;
-		this.authors = authors;
-		this.favorite = favorite;
-		this.fileCover = fileCover;
-		this.fileName = fileName;
-		this.fileBook = fileBook;
+const bookSchema = new Schema({
+	title: {
+		type: String,
+		required: true,
+	},
+	description: {
+		type: String,
+		default: "",
+	},
+	authors: {
+		type: String,
+		default: "",
+	},
+	favorite: {
+		type: String,
+		default: "",
+	},
+	fileCover: {
+		type: String,
+		default: "",
+	},
+	fileName: {
+		type: String,
+		default: "",
+	},
+	fileBook: {
+		type: String,
+		default: "",
+	},
+});
 
-		Book.idCounter++;
-	}
-}
-
-module.exports = Book;
+module.exports = model("Book", bookSchema);

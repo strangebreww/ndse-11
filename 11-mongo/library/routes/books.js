@@ -4,8 +4,6 @@ const { incCounter, getCounter } = require("../api/counter");
 
 const Book = require("../models/Book");
 
-const { books } = require("./store");
-
 const props = [
 	"title",
 	"description",
@@ -15,13 +13,15 @@ const props = [
 	"fileName",
 ];
 
-router.get("/view", (_req, res) => {
+router.get("/view", async (_req, res) => {
+	const books = await Book.find();
+
 	res.render("books/index", { title: "Книги", books: books });
 });
 
 router.get("/view/:id", async (req, res) => {
 	const { id } = req.params;
-	const book = books.find((b) => b.id === id);
+	const book = await Book.findById(id);
 
 	if (book) {
 		await incCounter(id);
@@ -41,8 +41,8 @@ router.get("/create", (_req, res) => {
 	res.render("books/create", { title: "Добавление книги", book: {} });
 });
 
-router.post("/create", fileMiddleware.single("fileBook"), (req, res) => {
-	const newBook = new Book();
+router.post("/create", fileMiddleware.single("fileBook"), async (req, res) => {
+	const newBook = {};
 
 	const { body, file } = req;
 
@@ -56,14 +56,20 @@ router.post("/create", fileMiddleware.single("fileBook"), (req, res) => {
 		newBook.fileBook = file.path;
 	}
 
-	books.push(newBook);
+	try {
+		const book = new Book(newBook);
 
-	res.redirect("/books/view");
+		await book.save();
+
+		res.redirect("/books/view");
+	} catch (e) {
+		console.error(e);
+	}
 });
 
-router.get("/update/:id", (req, res) => {
+router.get("/update/:id", async (req, res) => {
 	const { id } = req.params;
-	let book = books.find((b) => b.id === id);
+	let book = await Book.findById(id);
 
 	if (book) {
 		res.render("books/update", {
@@ -75,37 +81,41 @@ router.get("/update/:id", (req, res) => {
 	}
 });
 
-router.post("/update/:id", fileMiddleware.single("fileBook"), (req, res) => {
-	const { id } = req.params;
-	let book = books.find((b) => b.id === id);
+router.post(
+	"/update/:id",
+	fileMiddleware.single("fileBook"),
+	async (req, res) => {
+		const { id } = req.params;
+		let book = await Book.findById(id);
 
-	if (book) {
-		const { body, file } = req;
+		if (book) {
+			const { body, file } = req;
 
-		props.forEach((p) => {
-			if (body[p] !== undefined) {
-				book[p] = body[p];
+			props.forEach((p) => {
+				if (body[p] !== undefined) {
+					book[p] = body[p];
+				}
+			});
+
+			if (file) {
+				book.fileBook = file.path;
 			}
-		});
 
-		if (file) {
-			book.fileBook = file.path;
+			res.redirect("/books/view/" + id);
+		} else {
+			res.status(404).redirect("/404");
 		}
-
-		res.redirect("/books/view/" + id);
-	} else {
-		res.status(404).redirect("/404");
 	}
-});
+);
 
-router.post("/delete/:id", (req, res) => {
+router.post("/delete/:id", async (req, res) => {
 	const { id } = req.params;
-	const index = books.findIndex((b) => b.id === id);
 
-	if (index !== -1) {
-		books.splice(index, 1);
+	try {
+		await Book.deleteOne({ _id: id });
 		res.status(200).redirect("/books/view");
-	} else {
+	} catch (e) {
+		console.error(e);
 		res.status(404).redirect("/404");
 	}
 });

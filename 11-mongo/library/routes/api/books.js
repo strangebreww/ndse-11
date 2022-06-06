@@ -4,8 +4,6 @@ const path = require("path");
 
 const Book = require("../../models/Book");
 
-const { books } = require("../store");
-
 const props = [
 	"title",
 	"description",
@@ -15,13 +13,15 @@ const props = [
 	"fileName",
 ];
 
-router.get("/", (_req, res) => {
+router.get("/", async (_req, res) => {
+	const books = await Book.find().select("-__v");
+
 	res.status(200).json(books);
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id", async (req, res) => {
 	const { id } = req.params;
-	const book = books.find((b) => b.id === id);
+	const book = await Book.findById(id).select("-__v");
 
 	if (book) {
 		res.status(200).json(book);
@@ -30,8 +30,8 @@ router.get("/:id", (req, res) => {
 	}
 });
 
-router.post("/", fileMiddleware.single("fileBook"), (req, res) => {
-	const newBook = new Book();
+router.post("/", fileMiddleware.single("fileBook"), async (req, res) => {
+	const newBook = {};
 
 	const { body, file } = req;
 
@@ -45,14 +45,20 @@ router.post("/", fileMiddleware.single("fileBook"), (req, res) => {
 		newBook.fileBook = file.path;
 	}
 
-	books.push(newBook);
+	try {
+		const book = new Book(newBook);
 
-	res.status(201).json(books.at(-1));
+		await book.save();
+
+		res.status(201).json(book);
+	} catch (e) {
+		console.error(e);
+	}
 });
 
-router.put("/:id", fileMiddleware.single("fileBook"), (req, res) => {
+router.put("/:id", fileMiddleware.single("fileBook"), async (req, res) => {
 	const { id } = req.params;
-	let book = books.find((b) => b.id === id);
+	let book = await Book.findById(id).select("-__v");
 
 	if (book) {
 		const { body, file } = req;
@@ -73,21 +79,21 @@ router.put("/:id", fileMiddleware.single("fileBook"), (req, res) => {
 	}
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", async (req, res) => {
 	const { id } = req.params;
-	const index = books.findIndex((b) => b.id === id);
 
-	if (index !== -1) {
-		books.splice(index, 1);
+	try {
+		await Book.deleteOne({ _id: id });
 		res.status(200).send("ok");
-	} else {
+	} catch (e) {
+		console.error(e);
 		res.status(404).send("not found");
 	}
 });
 
-router.get("/:id/download", (req, res) => {
+router.get("/:id/download", async (req, res) => {
 	const { id } = req.params;
-	const book = books.find((b) => b.id === id);
+	const book = await Book.findById(id).select("-__v");
 
 	if (book) {
 		res.download(path.join(__dirname, "../..", book.fileBook), (err) => {
