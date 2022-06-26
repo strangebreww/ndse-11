@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const errorMiddleware = require("./middleware/error");
 const indexRouter = require("./routes/index");
 const booksRouter = require("./routes/books");
+const userRouter = require("./routes/user");
 const userApiRouter = require("./routes/api/user");
 const booksApiRouter = require("./routes/api/books");
 
@@ -12,6 +13,7 @@ app.set("view engine", "ejs");
 
 app.use("/", indexRouter);
 app.use("/books", booksRouter);
+app.use("/user", userRouter);
 app.use("/api/user", userApiRouter);
 app.use("/api/books", booksApiRouter);
 
