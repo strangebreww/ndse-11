@@ -1,7 +1,9 @@
 const router = require("express").Router();
 const passport = require("passport");
 
-router.get("/login", function (req, res) {
+const User = require("../../models/User");
+
+router.get("/login", function (_req, res) {
 	res.render("user/login");
 });
 
@@ -16,8 +18,29 @@ router.post(
 	}
 );
 
-router.post("/signup", (_req, res) => {
-	res.status(201).json({ id: 1, mail: "test@mail.ru" });
+router.get("/signup", function (_req, res) {
+	res.render("user/signup");
+});
+
+router.post("/signup", async (req, res) => {
+	const { body } = req;
+
+	if (body.password === body["password-repeat"]) {
+		const newUser = {
+			login: body.username,
+			password: body.password,
+		};
+
+		try {
+			const user = new User(newUser);
+
+			await user.save();
+
+			res.redirect("/");
+		} catch (e) {
+			console.error(e);
+		}
+	}
 });
 
 router.get(

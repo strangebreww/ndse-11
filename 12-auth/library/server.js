@@ -1,5 +1,5 @@
 const express = require("express");
-// const mongoose = require("mongoose");
+const mongoose = require("mongoose");
 const errorMiddleware = require("./middleware/error");
 const indexRouter = require("./routes/index");
 const booksRouter = require("./routes/books");
@@ -73,12 +73,12 @@ passport.deserializeUser(function (id, cb) {
 });
 
 const port = process.env.PORT || 3000;
-// const dbName = process.env.DB_NAME || "library_service";
+const dbName = process.env.DB_NAME || "library_service";
 
 async function start() {
 	try {
-		// const UrlDb = `mongodb://mongo:27017/${dbName}`;
-		// await mongoose.connect(UrlDb);
+		const UrlDb = `mongodb://mongo:27017/${dbName}`;
+		await mongoose.connect(UrlDb);
 
 		app.listen(port, () => {
 			console.log(`Server started on port ${port}`);
