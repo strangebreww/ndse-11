@@ -8,7 +8,8 @@ const booksApiRouter = require("./routes/api/books");
 const expressSession = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
-const db = require("./db");
+
+const User = require("./models/User");
 
 const app = express();
 
@@ -33,22 +34,22 @@ app.use("/api/books", booksApiRouter);
 
 app.use(errorMiddleware);
 
-function verify(username, password, done) {
-	console.log("verify");
-	db.users.findByUsername(username, function (err, user) {
-		if (err) {
-			return done(err);
-		}
+async function verify(username, password, done) {
+	try {
+		const user = await User.findOne({ login: username }).select("-__v");
+
 		if (!user) {
 			return done(null, false);
 		}
 
-		if (!db.users.verifyPassword(user, password)) {
+		if (user.password !== password) {
 			return done(null, false);
 		}
 
 		return done(null, user);
-	});
+	} catch (e) {
+		return done(e);
+	}
 }
 
 const options = {
@@ -60,16 +61,17 @@ const options = {
 passport.use("local", new LocalStrategy(options, verify));
 
 passport.serializeUser(function (user, cb) {
-	cb(null, user.id);
+	cb(null, user["_id"]);
 });
 
-passport.deserializeUser(function (id, cb) {
-	db.users.findById(id, function (err, user) {
-		if (err) {
-			return cb(err);
-		}
+passport.deserializeUser(async function (id, cb) {
+	try {
+		const user = await User.findById(id).select("-__v");
+
 		cb(null, user);
-	});
+	} catch (e) {
+		return cb(e);
+	}
 });
 
 const port = process.env.PORT || 3000;

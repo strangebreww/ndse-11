@@ -13,7 +13,6 @@ router.post(
 		failureRedirect: "/api/user/login",
 	}),
 	function (req, res) {
-		console.log("req.user: ", req.user);
 		res.redirect("/");
 	}
 );
@@ -59,9 +58,9 @@ router.get(
 	}
 );
 
-// router.get("/logout", function (req, res) {
-// 	req.logout();
-// 	res.redirect("/");
-// });
+router.get("/logout", function (req, res) {
+	req.logout();
+	res.redirect("/");
+});
 
 module.exports = router;
