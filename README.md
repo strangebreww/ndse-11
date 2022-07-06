@@ -11,3 +11,4 @@
 - 10-db			- База данных и хранение данных
 - 11-mongo		- Подключение MongoDB в Node.js приложение
 - 12-auth       - Аутентификация. PassportJS
+- 13-websocket  - Протокол websocket. Библиотека socket.io
