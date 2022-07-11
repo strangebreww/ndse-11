@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const errorMiddleware = require("./middleware/error");
+// const errorMiddleware = require("./middleware/error");
 const indexRouter = require("./routes/index");
 const booksRouter = require("./routes/books");
 const userApiRouter = require("./routes/api/user");
@@ -8,10 +8,14 @@ const booksApiRouter = require("./routes/api/books");
 const expressSession = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+const http = require("http");
+const { Server } = require("socket.io");
 
 const User = require("./models/User");
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 
 app.set("view engine", "ejs");
 
@@ -32,7 +36,7 @@ app.use("/books", booksRouter);
 app.use("/api/user", userApiRouter);
 app.use("/api/books", booksApiRouter);
 
-app.use(errorMiddleware);
+// app.use(errorMiddleware);
 
 async function verify(username, password, done) {
 	try {
@@ -72,6 +76,28 @@ passport.deserializeUser(async function (id, cb) {
 	} catch (e) {
 		return cb(e);
 	}
+});
+
+io.on("connection", (socket) => {
+	const { id } = socket;
+
+	console.log(`Socket connected: ${id}`);
+
+	const { roomName } = socket.handshake.query;
+
+	console.log(`Socket roomName: ${roomName}`);
+
+	socket.join(roomName);
+
+	socket.on("message-to-room", (msg) => {
+		msg.type = `room: ${roomName}`;
+		socket.to(roomName).emit("message-to-room", msg);
+		socket.emit("message-to-room", msg);
+	});
+
+	socket.on("disconnect", () => {
+		console.log(`Socket disconnected: ${id}`);
+	});
 });
 
 const port = process.env.PORT || 3000;

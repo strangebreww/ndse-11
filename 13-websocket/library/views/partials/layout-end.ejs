@@ -1,4 +1,40 @@
 	</main>
+<script>
+  	const roomName = location.pathname.split('/').pop();
+
+	console.log('io', io);
+	console.log('room name', roomName);
+
+    const socket = io.connect('/', { query: `roomName=${roomName}` });
+    const boxList = document.querySelector('#list');
+    const inputUsername = document.querySelector('#username');
+    const inputText = document.querySelector('#text');
+    const sendRoom = document.querySelector('#send-room');
+
+    const getTmp = (msg) => {
+        return `
+                <div class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <small>${msg.username}</small>
+                        <small class="text-muted">${msg.type}</small>
+                    </div>
+                    <p class="mb-1">${msg.text}</p>
+                </div>
+        `;
+    };
+
+    socket.on('message-to-room', (msg) => {
+        const div = getTmp(msg);
+        boxList.insertAdjacentHTML('beforeend', div);
+    });
+
+    sendRoom.addEventListener('click', () => {
+        socket.emit('message-to-room', {
+            username: inputUsername.value,
+            text: inputText.value,
+        });
+    });
+</script>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
 	integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
 	crossorigin="anonymous"></script>
