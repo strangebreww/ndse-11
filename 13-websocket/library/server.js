@@ -90,7 +90,6 @@ io.on("connection", (socket) => {
 	socket.join(roomName);
 
 	socket.on("message-to-room", (msg) => {
-		msg.type = `room: ${roomName}`;
 		socket.to(roomName).emit("message-to-room", msg);
 		socket.emit("message-to-room", msg);
 	});
@@ -108,7 +107,7 @@ async function start() {
 		const UrlDb = `mongodb://mongo:27017/${dbName}`;
 		await mongoose.connect(UrlDb);
 
-		app.listen(port, () => {
+		server.listen(port, () => {
 			console.log(`Server started on port ${port}`);
 		});
 	} catch (e) {
