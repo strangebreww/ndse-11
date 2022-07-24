@@ -1,6 +1,9 @@
 version: "3.9"
 
 services:
+  storage:
+    image: redis
+
   library:
     build: ./library
     ports:
@@ -20,8 +23,11 @@ services:
       - 3001:3001
     environment:
       - PORT=3001
+      - REDIS_URL=redis://storage
     volumes:
       - ./data:/app-data
+    depends_on:
+      - storage
 
   mongo:
     image: mongo

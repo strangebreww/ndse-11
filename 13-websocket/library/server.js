@@ -1,15 +1,16 @@
 const express = require("express");
 const mongoose = require("mongoose");
-// const errorMiddleware = require("./middleware/error");
-const indexRouter = require("./routes/index");
-const booksRouter = require("./routes/books");
-const userApiRouter = require("./routes/api/user");
-const booksApiRouter = require("./routes/api/books");
 const expressSession = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const http = require("http");
 const { Server } = require("socket.io");
+
+const errorMiddleware = require("./middleware/error");
+const indexRouter = require("./routes/index");
+const booksRouter = require("./routes/books");
+const userApiRouter = require("./routes/api/user");
+const booksApiRouter = require("./routes/api/books");
 
 const User = require("./models/User");
 
@@ -36,7 +37,7 @@ app.use("/books", booksRouter);
 app.use("/api/user", userApiRouter);
 app.use("/api/books", booksApiRouter);
 
-// app.use(errorMiddleware);
+app.use(errorMiddleware);
 
 async function verify(username, password, done) {
 	try {

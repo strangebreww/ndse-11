@@ -1,31 +1,35 @@
 const express = require("express");
-const { initCounter, saveCounter } = require("./file");
+const redis = require("redis");
 
 const app = express();
 
-const counter = initCounter();
+const redisUrl = process.env.REDIS_URL || "redis://localhost";
+
+const client = redis.createClient({ url: redisUrl });
+
+(async () => {
+	await client.connect();
+})();
 
 app.post("/counter/:bookId/incr", async (req, res) => {
 	const { bookId } = req.params;
 
-	counter[bookId] = counter[bookId] === undefined ? 1 : counter[bookId] + 1;
-
 	try {
-		await saveCounter(counter);
+		const counter = await client.incr(bookId);
+
+		res.status(201).json({ counter });
 	} catch (e) {
 		console.log(e.message);
 
 		res.status(404).send("not found");
 	}
-
-	res.status(201).json({ counter });
 });
 
-app.get("/counter/:bookId", (req, res) => {
+app.get("/counter/:bookId", async (req, res) => {
 	const { bookId } = req.params;
 
 	try {
-		const visits = counter[bookId] ?? 0;
+		const visits = (await client.get(bookId)) ?? 0;
 
 		res.status(200).send(visits.toString());
 	} catch (e) {

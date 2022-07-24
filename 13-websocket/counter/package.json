@@ -15,7 +15,8 @@
 	"license": "ISC",
 	"dependencies": {
 		"express": "^4.17.3",
-		"express-form-data": "^2.0.17"
+		"express-form-data": "^2.0.17",
+		"redis": "^4.2.0"
 	},
 	"devDependencies": {
 		"dotenv": "^16.0.0",
