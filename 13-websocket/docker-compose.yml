@@ -12,8 +12,6 @@ services:
       - PORT=3000
       - COUNTER_URL=http://counter:3001
       - COOKIE_SECRET=${DB_NAME:-top_secret}
-    volumes:
-      - ./data:/app-data
     depends_on:
       - counter
 
@@ -24,8 +22,6 @@ services:
     environment:
       - PORT=3001
       - REDIS_URL=redis://storage
-    volumes:
-      - ./data:/app-data
     depends_on:
       - storage
 
