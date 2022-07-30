@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const expressSession = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+const bcrypt = require("bcrypt");
 const http = require("http");
 const { Server } = require("socket.io");
 
@@ -47,7 +48,7 @@ async function verify(username, password, done) {
 			return done(null, false);
 		}
 
-		if (user.password !== password) {
+		if (!bcrypt.compareSync(password, user.password)) {
 			return done(null, false);
 		}
 

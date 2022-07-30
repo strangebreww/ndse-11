@@ -1,7 +1,9 @@
 const router = require("express").Router();
 const passport = require("passport");
+const bcrypt = require("bcrypt");
 
 const User = require("../../models/User");
+const bcryptConfig = require("../../bcryptConfig");
 
 router.get("/login", function (_req, res) {
 	res.render("user/login");
@@ -25,9 +27,12 @@ router.post("/signup", async (req, res) => {
 	const { body } = req;
 
 	if (body.password === body["password-repeat"]) {
+		const salt = bcrypt.genSaltSync(bcryptConfig.saltRounds);
+		const hashedPassword = bcrypt.hashSync(body.password, salt);
+
 		const newUser = {
 			login: body.username,
-			password: body.password,
+			password: hashedPassword,
 		};
 
 		try {
